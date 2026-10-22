@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menuju Ramadhan Utuh - KNE</title>
+    <style>
+        :root {
+            --primary: #0052cc;
+            --gold: #FFD700;
+            --bg-dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; 
+            background: radial-gradient(circle at top right, #1e293b, var(--bg-dark)); 
+            color: #f8fafc; min-height: 100vh; padding: 16px; display: flex; justify-content: center; align-items: center;
+        }
+        .container { max-width: 480px; width: 100%; text-align: center; }
+        
+        .header { margin-bottom: 24px; }
+        .logo-text { font-size: 24px; font-weight: 800; color: var(--gold); letter-spacing: 1px; margin-bottom: 5px; line-height: 1.3; }
+        .subtitle { font-size: 14px; color: #94a3b8; font-weight: 500; }
+
+        .card { 
+            background: var(--glass); backdrop-filter: blur(12px); border-radius: 20px; 
+            border: 1px solid var(--glass-border); padding: 20px; margin-bottom: 16px; 
+        }
+
+        /* Countdown Styles */
+        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+        .time-box { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px 5px; border: 1px solid var(--glass-border); }
+        .time-val { font-size: 24px; font-weight: 800; color: var(--gold); display: block; }
+        .time-label { font-size: 10px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Video Embed Responsive */
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 15px; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        /* Daily Message */
+        .message-box { min-height: 80px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .msg-text { font-size: 16px; font-weight: 600; color: #fff; line-height: 1.5; margin-bottom: 8px; }
+        .msg-date { font-size: 12px; color: #94a3b8; }
+
+        .btn-back { 
+            display: inline-block; width: 100%; padding: 14px; margin-top: 10px;
+            background: transparent; color: var(--gold); border: 1px solid var(--gold); 
+            border-radius: 14px; font-size: 16px; font-weight: 700; text-decoration: none; 
+            transition: all 0.3s; 
+        }
+        .btn-back:active { background: rgba(255, 215, 0, 0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-text">MENUJU RAMADHAN UTUH<br><span style="font-size:16px; opacity:0.8;">Jaga Diri, Jaga Ibadah</span></div>
+            <div class="subtitle">Safe Journey to Fasting 1448 H</div>
+        </div>
+
+        <!-- BAGIAN VIDEO -->
+        <div class="card">
+            <h3 style="color:var(--gold); margin-bottom:15px; font-size:16px;">🎥 Pesan Keselamatan</h3>
+            <div class="video-wrapper">
+                <!-- GANTI LINK DI BAWAH INI DENGAN LINK EMBED YOUTUBE/VIDEO ANDA -->
+                <iframe src="https://www.youtube.com/embed/VIDEO_ID_ANDA_DISINI" title="Video K3 Ramadhan" allowfullscreen></iframe>
+            </div>
+            <p style="font-size:13px; color:#cbd5e1; line-height:1.4;">
+                "Tubuhmu adalah amanah untuk beribadah dan memeluk keluarga. Jangan biarkan kelalaian merampas momen indah itu."
+            </p>
+        </div>
+
+        <!-- BAGIAN COUNTDOWN -->
+        <div class="card">
+            <h3 style="color:var(--gold); margin-bottom:5px; font-size:16px;">⏳ Menuju Ramadhan 2027</h3>
+            <p style="font-size:12px; color:#94a3b8; margin-bottom:10px;">8 Februari 2027 M / 1 Ramadhan 1448 H</p>
+            <div class="countdown-grid">
+                <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Hari</span></div>
+                <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Jam</span></div>
+                <div class="time-box"><span class="time-val" id="minutes">00</span><span class="time-label">Menit</span></div>
+                <div class="time-box"><span class="time-val" id="seconds">00</span><span class="time-label">Detik</span></div>
+            </div>
+        </div>
+
+        <!-- BAGIAN PESAN HARIAN OTOMATIS -->
+        <div class="card message-box">
+            <h3 style="color:var(--gold); margin-bottom:10px; font-size:16px;"> Pengingat K3 Hari Ini</h3>
+            <p id="dailyMessage" class="msg-text">Memuat pesan...</p>
+            <small id="messageDate" class="msg-date"></small>
+        </div>
+
+        <a href="https://CIKINI7777.github.io/Absensi-kutim/" class="btn-back">← Kembali ke Absensi</a>
+    </div>
+
+    <script>
+        // === 1. MESIN COUNTDOWN RAMADHAN 2027 ===
+        const targetDate = new Date('February 8, 2027 00:00:00').getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById('days').textContent = "00";
+                document.getElementById('hours').textContent = "00";
+                document.getElementById('minutes').textContent = "00";
+                document.getElementById('seconds').textContent = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // === 2. MESIN PESAN HARIAN OTOMATIS ===
+        // EDIT PESAN DI SINI SEKALI SAJA UNTUK SELAMANYA!
+        const k3RamadhanMessages = [
+            "Ramadhan adalah tamu agung. Jaga tubuhmu agar bisa menyambutnya dengan sempurna.",
+            "APD bukan beban, tapi tameng keselamatan menuju berbuka puasa bersama keluarga.",
+            "Jangan terburu-buru. Keselamatan adalah ibadah. Pulanglah dengan selamat.",
+            "Lelah itu wajar, tapi jangan sampai lengah. Istirahat sejenak demi nyawa.",
+            "Keluarga menantimu di rumah. Jadikan mereka alasan utamamu bekerja aman.",
+            "Puasa menahan lapar, K3 menahan celaka. Keduanya butuh kesadaran hati.",
+            "Satu kesalahan kecil bisa menghapus kebahagiaan lebaran nanti. Tetap waspada!",
+            "Sehat itu nikmat. Selamat bekerja itu anugerah. Jagalah keduanya.",
+            "Rekan kerjamu juga punya keluarga. Jangan biarkan kelalaianmu menyakiti mereka.",
+            "Ramadhan mengajarkan kesabaran. Bersabarlah mengikuti prosedur K3.",
+            "Niatkan bekerja aman sebagai ibadah. Allah menjaga hamba-Nya yang berhati-hati.",
+            "Fokus saat bekerja adalah bentuk syukur atas nikmat sehat yang Allah berikan.",
+            "Jangan abaikan near-miss. Itu peringatan halus dari Allah agar kita tetap selamat.",
+            "Tubuh yang lelah butuh istirahat, bukan dipaksa. Dengarkan sinyal tubuhmu.",
+            "Keselamatan dimulai dari hati yang tenang. Tenangkan pikiran sebelum mengoperasikan alat.",
+            "Jaga silaturahmi dengan rekan kerja. Saling mengingatkan adalah tanda sayang.",
+            "Prosedur K3 ditulis dengan darah para pendahulu. Hormati dengan mematuhinya.",
+            "Pulang selamat adalah hadiah terbaik untuk anak dan istri di rumah.",
+            "Jangan remehkan hal kecil. Baut longgar bisa jadi bencana besar.",
+            "Istiqomah dalam K3 seperti istiqomah dalam ibadah. Konsisten adalah kunci.",
+            "Alat pelindung diri adalah perisai imanmu di lapangan. Gunakan dengan benar.",
+            "Bekerja aman adalah hak keluarga. Jangan curi hak mereka dengan nekat.",
+            "Evaluasi diri setiap hari. Apakah hari ini aku sudah lebih hati-hati?",
+            "Doa ibu adalah pelindung terkuat. Buat ibu bangga dengan kepulanganmu yang selamat.",
+            "Ramadhan mendekat. Bersihkan hati dari lalai, bersihkan area kerja dari bahaya.",
+            "Keselamatan bukan soal untung-rugi, tapi soal cinta pada kehidupan.",
+            "Jadilah teladan keselamatan bagi rekan muda. Ilmu K3 adalah amal jariyah.",
+            "Terima kasih telah menjaga diri. Keluarga menunggu senyummu di hari kemenangan.",
+            "Satu hari lagi menuju Ramadhan. Pertahankan rekor nol kecelakaanmu.",
+            "Alhamdulillah, kita telah menjaga amanah. Selamat merayakan kemenangan dengan raga utuh."
+        ];
+
+        function showDailyReminder() {
+            const today = new Date();
+            let dayIndex = today.getDate() - 1; 
+            
+            if (dayIndex >= k3RamadhanMessages.length || dayIndex < 0) {
+                dayIndex = Math.floor(Math.random() * k3RamadhanMessages.length);
+            }
+
+            document.getElementById('dailyMessage').textContent = `"${k3RamadhanMessages[dayIndex]}"`;
+            document.getElementById('messageDate').textContent = `${today.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+        }
+        showDailyReminder();
+    </script>
+</body>
+</html>
